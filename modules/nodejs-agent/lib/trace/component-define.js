@@ -40,6 +40,7 @@ let Components = function() {
     this.MYSQL = new OfficeComponent(5, "MYSQL");
     this.EGG = new OfficeComponent(4003, "Egg");
     this.AMQP = new OfficeComponent(4004, "AMQP");
+    this.SOCKETIO = new OfficeComponent(4005, "SOCKET.IO");
 };
 
 Components.instance = null;
