@@ -19,7 +19,6 @@
 const ContextCarrier = require("skyapm-nodejs/lib/trace/context-carrier");
 const layerDefine = require("skyapm-nodejs/lib/trace/span-layer");
 const componentDefine = require("skyapm-nodejs/lib/trace/component-define");
-var parser = require('socket.io-parser');
 /**
  *
  * @param {socketioModule} socketioModule
@@ -31,11 +30,15 @@ var parser = require('socket.io-parser');
 module.exports = function(socketioModule, instrumentation, contextManager) {
     instrumentation.enhanceMethod(socketioModule, "ondecoded", wrapOndecoded);
     return socketioModule;
-
+    /**
+     * filterParams
+     * @param {original} original
+     * @return {*}
+     */
     function wrapOndecoded(original) {
         return function(packet) {
             let contextCarrier = new ContextCarrier();
-            if(packet.data.hasOwnProperty("headers")){
+            if (packet.data.hasOwnProperty("headers")) {
                 contextCarrier.fetchBy(function(key) {
                     if (packet.data.headers.hasOwnProperty(key)) {
                         return packet.data.headers[key];
@@ -43,15 +46,14 @@ module.exports = function(socketioModule, instrumentation, contextManager) {
                     return undefined;
                 });
             }
-
-            let  opName = packet.nsp+packet.data[0];
+            let opName = packet.nsp+packet.data[0];
             let span = contextManager.createEntrySpan(opName, contextCarrier);
             span.component(componentDefine.Components.SOCKETIO);
             span.spanLayer(layerDefine.Layers.HTTP);
-            let result = original.apply(this,arguments);
+            let result = original.apply(this, arguments);
             contextManager.finishSpan(span);
-            return  result;
+            return result;
         };
     }
+};
 
-}
