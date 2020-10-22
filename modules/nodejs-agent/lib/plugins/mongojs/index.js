@@ -17,7 +17,7 @@
 
 "use strict";
 
-const Plugin = require("skyapm-nodejs-dqj/lib/plugins/plugin");
+const Plugin = require("skyapm-nodejs/lib/plugins/plugin");
 
 module.exports = new Plugin("mongo-plugin", "mongojs", [{
     _name: "mongojs",
